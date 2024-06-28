@@ -2,49 +2,47 @@ name: build
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'main' ]
   pull_request:
-    branches: [ '**' ]
+    branches: [ 'main' ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     strategy:
       matrix:
         platform: [ubuntu-latest]
-        go-version: [1.17]
+        go-version: [ '1.21' ]
     name: Build
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Setup Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
 
-      - name: Set up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
       - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: alist
+        uses: actions/checkout@v4
 
-      - name: Install upx
+      - uses: benjlevesque/short-sha@v2.2
+        id: short-sha
+
+      - name: Install dependencies
         run: |
-          docker pull techknowlogick/xgo:latest
-          go install src.techknowlogick.com/xgo@latest
+          sudo snap install zig --classic --beta
+          docker pull crazymax/xgo:latest
+          go install github.com/crazy-max/xgo@latest
           sudo apt install upx
 
       - name: Build
         run: |
-          mv alist/build.sh .
-          bash build.sh web
-          mv dist/* alist/public
-          bash build.sh build
+          bash build.sh dev
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: artifact
-          path: alist/build
+          name: alist_${{ env.SHA }}
+          path: dist

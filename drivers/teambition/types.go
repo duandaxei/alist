@@ -2,23 +2,28 @@ package teambition
 
 import "time"
 
+type ErrResp struct {
+	Name    string `json:"name"`
+	Message string `json:"message"`
+}
+
 type Collection struct {
-	ID      string     `json:"_id"`
-	Title   string     `json:"title"`
-	Updated *time.Time `json:"updated"`
+	ID      string    `json:"_id"`
+	Title   string    `json:"title"`
+	Updated time.Time `json:"updated"`
 }
 
 type Work struct {
-	ID           string     `json:"_id"`
-	FileName     string     `json:"fileName"`
-	FileSize     int64      `json:"fileSize"`
-	FileKey      string     `json:"fileKey"`
-	FileCategory string     `json:"fileCategory"`
-	DownloadURL  string     `json:"downloadUrl"`
-	ThumbnailURL string     `json:"thumbnailUrl"`
-	Thumbnail    string     `json:"thumbnail"`
-	Updated      *time.Time `json:"updated"`
-	PreviewURL   string     `json:"previewUrl"`
+	ID           string    `json:"_id"`
+	FileName     string    `json:"fileName"`
+	FileSize     int64     `json:"fileSize"`
+	FileKey      string    `json:"fileKey"`
+	FileCategory string    `json:"fileCategory"`
+	DownloadURL  string    `json:"downloadUrl"`
+	ThumbnailURL string    `json:"thumbnailUrl"`
+	Thumbnail    string    `json:"thumbnail"`
+	Updated      time.Time `json:"updated"`
+	PreviewURL   string    `json:"previewUrl"`
 }
 
 type FileUpload struct {
@@ -60,4 +65,25 @@ type ChunkUpload struct {
 	ImmPreviewUrl  string      `json:"immPreviewUrl"`
 	PreviewExt     string      `json:"previewExt"`
 	LastUploadTime interface{} `json:"lastUploadTime"`
+}
+
+type UploadToken struct {
+	Sdk struct {
+		Endpoint         string `json:"endpoint"`
+		Region           string `json:"region"`
+		S3ForcePathStyle bool   `json:"s3ForcePathStyle"`
+		Credentials      struct {
+			AccessKeyId     string `json:"accessKeyId"`
+			SecretAccessKey string `json:"secretAccessKey"`
+			SessionToken    string `json:"sessionToken"`
+		} `json:"credentials"`
+	} `json:"sdk"`
+	Upload struct {
+		Bucket             string `json:"Bucket"`
+		Key                string `json:"Key"`
+		ContentDisposition string `json:"ContentDisposition"`
+		ContentType        string `json:"ContentType"`
+	} `json:"upload"`
+	Token       string `json:"token"`
+	DownloadUrl string `json:"downloadUrl"`
 }
